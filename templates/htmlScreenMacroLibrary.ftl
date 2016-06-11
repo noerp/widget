@@ -129,8 +129,8 @@ under the License.
             jQuery("#${uniqueItemName}").dialog({
                  autoOpen: false,
                  <#if text?has_content>title: "${text}",</#if>
-                 height: ${height},
-                 width: ${width},
+                 height: "${height}",
+                 width: "${width}",
                  modal: true,
                  open: function() {
                          jQuery.ajax({

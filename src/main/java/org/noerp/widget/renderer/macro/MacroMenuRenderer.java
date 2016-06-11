@@ -205,19 +205,35 @@ public class MacroMenuRenderer implements MenuStringRenderer {
         parameters.put("name", link.getName(context));
         parameters.put("text", link.getText(context));
         parameters.put("targetWindow", link.getTargetWindow(context));
+        
         String uniqueItemName = menuItem.getModelMenu().getName() + "_" + menuItem.getName() + "_LF_" + UtilMisc.<String> addToBigDecimalInMap(context, "menuUniqueItemIndex", BigDecimal.ONE);
         if(menuItem.getModelMenu().getExtraIndex(context) != null){
 			uniqueItemName += "_" + menuItem.getModelMenu().getExtraIndex(context);
 		}
         parameters.put("uniqueItemName", uniqueItemName);
+        
+        String width = link.getWidth();
+        if (UtilValidate.isEmpty(width)) {
+            width = "auto";
+        }
+        parameters.put("width", width);
+        
+        String height = link.getHeight();
+        if (UtilValidate.isEmpty(height)) {
+            height = "auto";
+        }
+        parameters.put("height", height);
+        
         String linkType = "";
         if (UtilValidate.isNotEmpty(target)) {
             linkType = WidgetWorker.determineAutoLinkType(link.getLinkType(), target, link.getUrlMode(), request);
         }
         parameters.put("linkType", linkType);
+        
         String linkUrl = "";
         String actionUrl = "";
         StringBuilder targetParameters = new StringBuilder();
+        
         if ("hidden-form".equals(linkType) || "ajax-window".equals(linkType)) {
             StringBuilder sb = new StringBuilder();
             WidgetWorker.buildHyperlinkUrl(sb, target, link.getUrlMode(), null, link.getPrefix(context), link.getFullPath(), link.getSecure(), link.getEncode(), request, response, context);
@@ -247,9 +263,12 @@ public class MacroMenuRenderer implements MenuStringRenderer {
                 linkUrl = sb.toString();
             }
         }
+        
+        parameters.put("target", target);
         parameters.put("linkUrl", linkUrl);
         parameters.put("actionUrl", actionUrl);
         parameters.put("parameterList", targetParameters);
+        
         String imgStr = "";
         Image img = link.getImage();
         if (img != null) {
@@ -258,6 +277,7 @@ public class MacroMenuRenderer implements MenuStringRenderer {
             imgStr = sw.toString();
         }
         parameters.put("imgStr", imgStr);
+        
         try {
             executeMacro(writer, "renderLink", parameters);
         } catch (TemplateException e) {

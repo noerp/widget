@@ -235,11 +235,11 @@ public class MacroScreenRenderer implements ScreenStringRenderer {
         StringBuilder parameters=new StringBuilder();
         String width = link.getWidth();
         if (UtilValidate.isEmpty(width)) {
-            width = "300";
+            width = "auto";
         }
         String height = link.getHeight();
         if (UtilValidate.isEmpty(height)) {
-            height = "200";
+            height = "auto";
         }
         if ("hidden-form".equals(linkType) || "ajax-window".equals(linkType)) {
             StringBuilder sb = new StringBuilder();
