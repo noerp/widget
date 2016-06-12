@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.noerp.base.util.StringUtil;
 import org.noerp.base.util.UtilGenerics;
+import org.noerp.base.util.UtilProperties;
 import org.noerp.base.util.UtilValidate;
 import org.noerp.webapp.control.RequestHandler;
 import org.noerp.webapp.taglib.ContentUrlTag;
@@ -37,6 +38,8 @@ import org.noerp.widget.model.ModelWidget;
 import org.noerp.widget.renderer.ScreenRenderer;
 import org.noerp.widget.renderer.ScreenStringRenderer;
 import org.noerp.widget.renderer.TreeStringRenderer;
+import org.noerp.widget.renderer.macro.MacroScreenRenderer;
+import freemarker.template.TemplateException;
 
 
 /**
@@ -334,7 +337,12 @@ public class HtmlTreeRenderer extends HtmlWidgetRenderer implements TreeStringRe
             screenStringRenderer = screenRenderer.getScreenStringRenderer();
         } else {
             if (screenStringRenderer == null) {
-                screenStringRenderer = new HtmlScreenRenderer();
+                try {
+                    screenStringRenderer = new MacroScreenRenderer(UtilProperties.getPropertyValue("widget", "screen.name"), 
+                            UtilProperties.getPropertyValue("widget", "screen.screenrenderer"));
+                } catch (TemplateException | IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
         return screenStringRenderer;

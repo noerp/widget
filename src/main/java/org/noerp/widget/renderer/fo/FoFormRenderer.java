@@ -44,6 +44,7 @@ import org.noerp.widget.model.ModelFormField.HyperlinkField;
 import org.noerp.widget.model.ModelFormField.IgnoredField;
 import org.noerp.widget.model.ModelFormField.ImageField;
 import org.noerp.widget.model.ModelFormField.LookupField;
+import org.noerp.widget.model.ModelFormField.MenuField;
 import org.noerp.widget.model.ModelFormField.PasswordField;
 import org.noerp.widget.model.ModelFormField.RadioField;
 import org.noerp.widget.model.ModelFormField.RangeFindField;
@@ -55,6 +56,7 @@ import org.noerp.widget.model.ModelFormField.TextareaField;
 import org.noerp.widget.model.ModelWidget;
 import org.noerp.widget.renderer.FormStringRenderer;
 import org.noerp.widget.renderer.html.HtmlWidgetRenderer;
+import org.noerp.widget.renderer.macro.MacroScreenRenderer;
 
 
 /**
@@ -79,7 +81,7 @@ public class FoFormRenderer extends HtmlWidgetRenderer implements FormStringRend
         writer.append("<fo:block");
         if (UtilValidate.isNotEmpty(widgetStyle)) {
             writer.append(" ");
-            writer.append(FoScreenRenderer.getFoStyle(widgetStyle));
+            writer.append(MacroScreenRenderer.getFoStyle(widgetStyle));
         }
         writer.append(">");
         writer.append(UtilFormatOut.encodeXmlValue(text));
@@ -96,6 +98,10 @@ public class FoFormRenderer extends HtmlWidgetRenderer implements FormStringRend
         ModelFormField modelFormField = hyperlinkField.getModelFormField();
         this.makeBlockString(writer, modelFormField.getWidgetStyle(), hyperlinkField.getDescription(context));
         appendWhitespace(writer);
+    }
+
+    public void renderMenuField(Appendable writer, Map<String, Object> context, MenuField menuField) throws IOException {
+        menuField.renderFieldString(writer, context, null);
     }
 
     public void renderTextField(Appendable writer, Map<String, Object> context, TextField textField) throws IOException {
@@ -205,7 +211,7 @@ public class FoFormRenderer extends HtmlWidgetRenderer implements FormStringRend
             String areaStyle = childField.getTitleAreaStyle();
             if (UtilValidate.isNotEmpty(areaStyle)) {
                 writer.append(" ");
-                writer.append(FoScreenRenderer.getFoStyle(areaStyle));
+                writer.append(MacroScreenRenderer.getFoStyle(areaStyle));
             }
             writer.append("/>");
             appendWhitespace(writer);
@@ -218,19 +224,27 @@ public class FoFormRenderer extends HtmlWidgetRenderer implements FormStringRend
         writer.append("</fo:table>");
         appendWhitespace(writer);
     }
+    
+    public void renderFormatHeaderOpen(Appendable writer, Map<String, Object> context, ModelForm modelForm) throws IOException {
+        writer.append("<fo:table-header>");
+        appendWhitespace(writer);
+    }
+        
+    public void renderFormatHeaderClose(Appendable writer, Map<String, Object> context, ModelForm modelForm) throws IOException {
+        writer.append("  </fo:table-header>");
+        writer.append("  <fo:table-body>");
+        // FIXME: this is an hack to avoid FOP rendering errors for empty lists (fo:table-body cannot be null)
+        writer.append("<fo:table-row><fo:table-cell><fo:block/></fo:table-cell></fo:table-row>");
+        appendWhitespace(writer);
+    }
 
     public void renderFormatHeaderRowOpen(Appendable writer, Map<String, Object> context, ModelForm modelForm) throws IOException {
-        writer.append("<fo:table-header>");
         writer.append("<fo:table-row>");
         appendWhitespace(writer);
     }
 
     public void renderFormatHeaderRowClose(Appendable writer, Map<String, Object> context, ModelForm modelForm) throws IOException {
         writer.append("</fo:table-row>");
-        writer.append("</fo:table-header>");
-        writer.append("<fo:table-body>");
-        // FIXME: this is an hack to avoid FOP rendering errors for empty lists (fo:table-body cannot be null)
-        writer.append("<fo:table-row><fo:table-cell><fo:block/></fo:table-cell></fo:table-row>");
         appendWhitespace(writer);
     }
 
@@ -287,7 +301,7 @@ public class FoFormRenderer extends HtmlWidgetRenderer implements FormStringRend
         if (UtilValidate.isEmpty(areaStyle)) {
             areaStyle = "tabletext";
         }
-        writer.append(FoScreenRenderer.getFoStyle(areaStyle));
+        writer.append(MacroScreenRenderer.getFoStyle(areaStyle));
         writer.append(">");
         appendWhitespace(writer);
     }

@@ -31,16 +31,20 @@ import org.noerp.widget.model.ModelFormField.DisplayField;
 import org.noerp.widget.model.ModelFormField.DropDownField;
 import org.noerp.widget.model.ModelFormField.FieldInfoWithOptions;
 import org.noerp.widget.model.ModelFormField.FileField;
+import org.noerp.widget.model.ModelFormField.FormField;
+import org.noerp.widget.model.ModelFormField.GridField;
 import org.noerp.widget.model.ModelFormField.HiddenField;
 import org.noerp.widget.model.ModelFormField.HyperlinkField;
 import org.noerp.widget.model.ModelFormField.IgnoredField;
 import org.noerp.widget.model.ModelFormField.ImageField;
 import org.noerp.widget.model.ModelFormField.InPlaceEditor;
 import org.noerp.widget.model.ModelFormField.LookupField;
+import org.noerp.widget.model.ModelFormField.MenuField;
 import org.noerp.widget.model.ModelFormField.PasswordField;
 import org.noerp.widget.model.ModelFormField.RadioField;
 import org.noerp.widget.model.ModelFormField.RangeFindField;
 import org.noerp.widget.model.ModelFormField.ResetField;
+import org.noerp.widget.model.ModelFormField.ScreenField;
 import org.noerp.widget.model.ModelFormField.SubHyperlink;
 import org.noerp.widget.model.ModelFormField.SubmitField;
 import org.noerp.widget.model.ModelFormField.TextField;
@@ -171,6 +175,42 @@ public class XmlWidgetFieldVisitor extends XmlAbstractWidgetVisitor implements M
             writer.append("/>");
         }
         writer.append("</field>");
+    }
+
+    @Override
+    public void visit(FormField formField) throws Exception {
+        visitModelField(formField.getModelFormField());
+        writer.append("<include-form");
+        visitAttribute("name", formField.getFormName());
+        visitAttribute("location", formField.getFormLocation());
+        writer.append("/>");
+    }
+
+    @Override
+    public void visit(GridField gridField) throws Exception {
+        visitModelField(gridField.getModelFormField());
+        writer.append("<include-grid");
+        visitAttribute("name", gridField.getGridName());
+        visitAttribute("location", gridField.getGridLocation());
+        writer.append("/>");
+    }
+
+    @Override
+    public void visit(MenuField menuField) throws Exception {
+        visitModelField(menuField.getModelFormField());
+        writer.append("<include-menu");
+        visitAttribute("name", menuField.getMenuName());
+        visitAttribute("location", menuField.getMenuLocation());
+        writer.append("/>");
+    }
+
+    @Override
+    public void visit(ScreenField screenField) throws Exception {
+        visitModelField(screenField.getModelFormField());
+        writer.append("<include-screen");
+        visitAttribute("name", screenField.getScreenName());
+        visitAttribute("location", screenField.getScreenLocation());
+        writer.append("/>");
     }
 
     @Override

@@ -44,16 +44,20 @@ import org.noerp.widget.model.ModelFormField.DisplayEntityField;
 import org.noerp.widget.model.ModelFormField.DisplayField;
 import org.noerp.widget.model.ModelFormField.DropDownField;
 import org.noerp.widget.model.ModelFormField.FileField;
+import org.noerp.widget.model.ModelFormField.FormField;
+import org.noerp.widget.model.ModelFormField.GridField;
 import org.noerp.widget.model.ModelFormField.HiddenField;
 import org.noerp.widget.model.ModelFormField.HyperlinkField;
 import org.noerp.widget.model.ModelFormField.IgnoredField;
 import org.noerp.widget.model.ModelFormField.ImageField;
 import org.noerp.widget.model.ModelFormField.LookupField;
+import org.noerp.widget.model.ModelFormField.MenuField;
 import org.noerp.widget.model.ModelFormField.OptionSource;
 import org.noerp.widget.model.ModelFormField.PasswordField;
 import org.noerp.widget.model.ModelFormField.RadioField;
 import org.noerp.widget.model.ModelFormField.RangeFindField;
 import org.noerp.widget.model.ModelFormField.ResetField;
+import org.noerp.widget.model.ModelFormField.ScreenField;
 import org.noerp.widget.model.ModelFormField.SubmitField;
 import org.noerp.widget.model.ModelFormField.TextField;
 import org.noerp.widget.model.ModelFormField.TextFindField;
@@ -102,9 +106,11 @@ public class ModelFormFieldBuilder {
     private FlexibleStringExpander tooltip = FlexibleStringExpander.getInstance("");;
     private String tooltipStyle = "";
     private FlexibleStringExpander useWhen = FlexibleStringExpander.getInstance("");;
+    private FlexibleStringExpander ignoreWhen = FlexibleStringExpander.getInstance("");
     private String widgetAreaStyle = "";
     private String widgetStyle = "";
     private String parentFormName = "";
+    private String tabindex = "";
 
     public ModelFormFieldBuilder() {
     }
@@ -151,9 +157,11 @@ public class ModelFormFieldBuilder {
         this.tooltip = FlexibleStringExpander.getInstance(fieldElement.getAttribute("tooltip"));
         this.tooltipStyle = fieldElement.getAttribute("tooltip-style");
         this.useWhen = FlexibleStringExpander.getInstance(fieldElement.getAttribute("use-when"));
+        this.ignoreWhen = FlexibleStringExpander.getInstance(fieldElement.getAttribute("ignore-when"));
         this.widgetAreaStyle = fieldElement.getAttribute("widget-area-style");
         this.widgetStyle = fieldElement.getAttribute("widget-style");
         this.parentFormName = fieldElement.getAttribute("form-name");
+        this.tabindex = fieldElement.getAttribute("tabindex");
         Element childElement = null;
         List<? extends Element> subElements = UtilXml.childElementList(fieldElement);
         for (Element subElement : subElements) {
@@ -208,6 +216,14 @@ public class ModelFormFieldBuilder {
             this.fieldInfo = new RangeFindField(childElement, null);
         else if ("lookup".equals(this.fieldType))
             this.fieldInfo = new LookupField(childElement, null);
+        else if ("include-menu".equals(this.fieldType))
+            this.fieldInfo = new MenuField(childElement, null);
+        else if ("include-form".equals(this.fieldType))
+            this.fieldInfo = new FormField(childElement, null);
+        else if ("include-grid".equals(this.fieldType))
+            this.fieldInfo = new GridField(childElement, null);
+        else if ("include-screen".equals(this.fieldType))
+            this.fieldInfo = new ScreenField(childElement, null);
         else if ("file".equals(this.fieldType))
             this.fieldInfo = new FileField(childElement, null);
         else if ("password".equals(this.fieldType))
@@ -258,6 +274,7 @@ public class ModelFormFieldBuilder {
         this.widgetAreaStyle = modelFormField.getWidgetAreaStyle();
         this.widgetStyle = modelFormField.getWidgetStyle();
         this.parentFormName = modelFormField.getParentFormName();
+        this.tabindex = modelFormField.getTabindex();
     }
 
     public ModelFormFieldBuilder(ModelFormFieldBuilder builder) {
@@ -298,6 +315,7 @@ public class ModelFormFieldBuilder {
         this.widgetAreaStyle = builder.getWidgetAreaStyle();
         this.widgetStyle = builder.getWidgetStyle();
         this.parentFormName = builder.getParentFormName();
+        this.tabindex = builder.getTabindex();
     }
 
     public ModelFormFieldBuilder addOnChangeUpdateArea(UpdateArea onChangeUpdateArea) {
@@ -454,6 +472,10 @@ public class ModelFormFieldBuilder {
         return useWhen;
     }
 
+    public FlexibleStringExpander getIgnoreWhen() {
+        return ignoreWhen;
+    }
+
     public String getWidgetAreaStyle() {
         return widgetAreaStyle;
     }
@@ -463,7 +485,11 @@ public class ModelFormFieldBuilder {
     }
 
     public String getParentFormName() {
-        return this.parentFormName;
+        return parentFormName;
+    }
+
+    public String getTabindex() {
+        return tabindex;
     }
 
     private boolean induceFieldInfo(ModelForm modelForm, String defaultFieldType, ModelReader entityModelReader, DispatchContext dispatchContext) {
@@ -507,7 +533,7 @@ public class ModelFormFieldBuilder {
                         Integer.valueOf(250), null);
                 this.setFieldInfo(textField);
             } else if ("floating-point".equals(modelField.getType()) || "currency-amount".equals(modelField.getType())
-                    || "numeric".equals(modelField.getType())) {
+                    || "numeric".equals(modelField.getType()) || "fixed-point".equals(modelField.getType()) || "currency-precise".equals(modelField.getType())) {
                 ModelFormField.RangeFindField textField = new ModelFormField.RangeFindField(FieldInfo.SOURCE_AUTO_ENTITY, 6, null);
                 this.setFieldInfo(textField);
             } else if ("date-time".equals(modelField.getType()) || "date".equals(modelField.getType())
@@ -724,8 +750,6 @@ public class ModelFormFieldBuilder {
             this.titleStyle = builder.getTitleStyle();
         if (UtilValidate.isNotEmpty(builder.getWidgetStyle()))
             this.widgetStyle = builder.getWidgetStyle();
-        if (UtilValidate.isNotEmpty(builder.getParentFormName()))
-            this.parentFormName = builder.getParentFormName();
         if (UtilValidate.isNotEmpty(builder.getRedWhen()))
             this.redWhen = builder.getRedWhen();
         if (UtilValidate.isNotEmpty(builder.getEvent()))
@@ -734,6 +758,8 @@ public class ModelFormFieldBuilder {
             this.action = builder.getAction();
         if (UtilValidate.isNotEmpty(builder.getUseWhen()))
             this.useWhen = builder.getUseWhen();
+        if (UtilValidate.isNotEmpty(builder.getIgnoreWhen()))
+            this.ignoreWhen = builder.getIgnoreWhen();
         if (builder.getFieldInfo() != null)
             this.setFieldInfo(builder.getFieldInfo());
         if (UtilValidate.isNotEmpty(builder.getHeaderLink()))
@@ -746,6 +772,10 @@ public class ModelFormFieldBuilder {
             this.onChangeUpdateAreas.addAll(builder.getOnChangeUpdateAreas());
         if (UtilValidate.isNotEmpty(builder.getOnClickUpdateAreas()))
             this.onClickUpdateAreas.addAll(builder.getOnClickUpdateAreas());
+        if (UtilValidate.isNotEmpty(builder.getParentFormName()))
+            this.parentFormName = builder.getParentFormName();
+        if (UtilValidate.isNotEmpty(builder.getTabindex()))
+            this.tabindex = builder.getTabindex();
         this.encodeOutput = builder.getEncodeOutput();
         this.position = builder.getPosition();
         this.requiredField = builder.getRequiredField();
@@ -930,6 +960,10 @@ public class ModelFormFieldBuilder {
     }
     public ModelFormFieldBuilder setParentFormName(String parentFormName) {
         this.parentFormName = parentFormName;
+        return this;
+    }
+    public ModelFormFieldBuilder setTabindex(String tabindex) {
+        this.tabindex = tabindex;
         return this;
     }
 }

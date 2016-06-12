@@ -60,6 +60,7 @@ import org.noerp.widget.model.ModelFormField.HyperlinkField;
 import org.noerp.widget.model.ModelFormField.IgnoredField;
 import org.noerp.widget.model.ModelFormField.ImageField;
 import org.noerp.widget.model.ModelFormField.LookupField;
+import org.noerp.widget.model.ModelFormField.MenuField;
 import org.noerp.widget.model.ModelFormField.PasswordField;
 import org.noerp.widget.model.ModelFormField.RadioField;
 import org.noerp.widget.model.ModelFormField.RangeFindField;
@@ -371,6 +372,10 @@ public class HtmlFormRenderer extends HtmlWidgetRenderer implements FormStringRe
         return value;
     }
 
+    public void renderMenuField(Appendable writer, Map<String, Object> context, MenuField menuField) throws IOException {
+        menuField.renderFieldString(writer, context, null);
+    }
+
     /* (non-Javadoc)
      * @see org.noerp.widget.form.FormStringRenderer#renderTextField(java.io.Writer, java.util.Map, org.noerp.widget.model.ModelFormField.TextField)
      */
@@ -467,6 +472,13 @@ public class HtmlFormRenderer extends HtmlWidgetRenderer implements FormStringRe
         writer.append(Integer.toString(textareaField.getRows()));
         writer.append('"');
 
+        Integer maxlength = textareaField.getMaxlength();
+        if(maxlength != null) {
+            writer.append(" maxlength=\"");
+            writer.append(Integer.toString(textareaField.getMaxlength()));
+            writer.append('"');
+        }
+
         String idName = modelFormField.getCurrentContainerId(context);
         if (UtilValidate.isNotEmpty(idName)) {
             writer.append(" id=\"");
@@ -492,8 +504,8 @@ public class HtmlFormRenderer extends HtmlWidgetRenderer implements FormStringRe
         writer.append("</textarea>");
 
         if (textareaField.getVisualEditorEnable()) {
-            writer.append("<script language=\"javascript\" src=\"/assets/jquery/plugins/elrte-1.3/js/elrte.min.js\" type=\"text/javascript\"></script>");
-            writer.append("<link href=\"/assets/jquery/plugins/elrte-1.3/css/elrte.min.css\" rel=\"stylesheet\" type=\"text/css\">");
+            writer.append("<script language=\"javascript\" src=\"/images/jquery/plugins/elrte-1.3/js/elrte.min.js\" type=\"text/javascript\"></script>");
+            writer.append("<link href=\"/images/jquery/plugins/elrte-1.3/css/elrte.min.css\" rel=\"stylesheet\" type=\"text/css\">");
             writer.append("<script language=\"javascript\" type=\"text/javascript\"> var opts = { cssClass : 'el-rte', toolbar : ");
             // define the toolsbar
             String buttons = textareaField.getVisualEditorButtons(context);
@@ -1090,7 +1102,7 @@ public class HtmlFormRenderer extends HtmlWidgetRenderer implements FormStringRe
 
         if (UtilValidate.isNotEmpty(titleText)) {
             // copied from MacroFormRenderer renderFieldTitle
-            String displayHelpText = UtilProperties.getPropertyValue("widget.properties", "widget.form.displayhelpText");
+            String displayHelpText = UtilProperties.getPropertyValue("widget", "widget.form.displayhelpText");
             String helpText = null;
             if ("Y".equals(displayHelpText)) {
                 Delegator delegator = WidgetWorker.getDelegator(context);
@@ -1314,6 +1326,18 @@ public class HtmlFormRenderer extends HtmlWidgetRenderer implements FormStringRe
             this.renderNextPrev(writer, context, modelForm);
         }
         renderEndingBoundaryComment(writer, "Form Widget - Formal List Wrapper", modelForm);
+    }
+    
+    public void renderFormatHeaderOpen(Appendable writer, Map<String, Object> context, ModelForm modelForm) throws IOException {
+        writer.append("  <thead");
+        writer.append(">");
+        appendWhitespace(writer);
+    }
+        
+    public void renderFormatHeaderClose(Appendable writer, Map<String, Object> context, ModelForm modelForm) throws IOException {
+        writer.append("  </thead");
+        writer.append(">");
+        appendWhitespace(writer);
     }
 
     /* (non-Javadoc)
@@ -2097,7 +2121,6 @@ public class HtmlFormRenderer extends HtmlWidgetRenderer implements FormStringRe
             writer.append(modelFormField.getParameterName(context));
             writer.append(",'");
         }
-        writer.append(appendExternalLoginKey(lookupField.getFormName(context)));
         writer.append("'");
         List<String> targetParameterList = lookupField.getTargetParameterList();
         for (String targetParameter: targetParameterList) {
@@ -2129,18 +2152,6 @@ public class HtmlFormRenderer extends HtmlWidgetRenderer implements FormStringRe
         appendWhitespace(writer);
 
         //appendWhitespace(writer);
-    }
-
-    protected String appendExternalLoginKey(String target) {
-        String result = target;
-        String sessionId = ";jsessionid=" + request.getSession().getId();
-        int questionIndex = target.indexOf("?");
-        if (questionIndex == -1) {
-            result += sessionId;
-        } else {
-            result = result.replace("?", sessionId + "?");
-        }
-        return result;
     }
 
     private int getActualPageSize(Map<String, Object> context) {

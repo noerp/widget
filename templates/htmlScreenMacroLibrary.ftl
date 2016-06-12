@@ -91,7 +91,7 @@ under the License.
 </#macro>
 
 <#macro renderLink parameterList targetWindow target uniqueItemName linkType actionUrl id style name height width linkUrl text imgStr>
-    <#if "ajax-window" != linkType>
+    <#if "layered-modal" != linkType>
         <#if "hidden-form" == linkType>
             <form method="post" action="${actionUrl}" <#if targetWindow?has_content>target="${targetWindow}"</#if> onsubmit="javascript:submitFormDisableSubmits(this)" name="${uniqueItemName}"><#rt/>
                 <#list parameterList as parameter>
@@ -113,7 +113,7 @@ under the License.
         <#if style?has_content>class="${style}"</#if>>
         <#if text?has_content>${text}</#if></a>
         <script type="text/javascript">
-            function getRequestData () {
+            function ${uniqueItemName}_data() {
                 var data =  {
                     <#list parameterList as parameter>
                         "${parameter.name}": "${parameter.value}",
@@ -129,14 +129,15 @@ under the License.
             jQuery("#${uniqueItemName}").dialog({
                  autoOpen: false,
                  <#if text?has_content>title: "${text}",</#if>
-                 height: "${height}",
-                 width: "${width}",
+                 height: ${height},
+                 width: ${width},
                  modal: true,
+                 closeOnEscape: true,
                  open: function() {
                          jQuery.ajax({
                              url: "${target}",
                              type: "POST",
-                             data: getRequestData(),
+                             data: ${uniqueItemName}_data(),
                              success: function(data) {jQuery("#${uniqueItemName}").html(data);}
                          });
                  }

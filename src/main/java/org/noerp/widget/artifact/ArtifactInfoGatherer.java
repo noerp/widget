@@ -58,15 +58,19 @@ import org.noerp.widget.model.ModelFormField.DisplayField;
 import org.noerp.widget.model.ModelFormField.DropDownField;
 import org.noerp.widget.model.ModelFormField.FieldInfoWithOptions;
 import org.noerp.widget.model.ModelFormField.FileField;
+import org.noerp.widget.model.ModelFormField.FormField;
+import org.noerp.widget.model.ModelFormField.GridField;
 import org.noerp.widget.model.ModelFormField.HiddenField;
 import org.noerp.widget.model.ModelFormField.HyperlinkField;
 import org.noerp.widget.model.ModelFormField.IgnoredField;
 import org.noerp.widget.model.ModelFormField.ImageField;
 import org.noerp.widget.model.ModelFormField.LookupField;
+import org.noerp.widget.model.ModelFormField.MenuField;
 import org.noerp.widget.model.ModelFormField.PasswordField;
 import org.noerp.widget.model.ModelFormField.RadioField;
 import org.noerp.widget.model.ModelFormField.RangeFindField;
 import org.noerp.widget.model.ModelFormField.ResetField;
+import org.noerp.widget.model.ModelFormField.ScreenField;
 import org.noerp.widget.model.ModelFormField.SubmitField;
 import org.noerp.widget.model.ModelFormField.TextField;
 import org.noerp.widget.model.ModelFormField.TextFindField;
@@ -453,6 +457,21 @@ public final class ArtifactInfoGatherer implements ModelWidgetVisitor, ModelActi
         }
 
         @Override
+        public void visit(MenuField menuField) {
+            //TODO
+        }
+        
+        @Override
+        public void visit(FormField formField) {
+            //TODO
+        }
+        
+        @Override
+        public void visit(GridField gridField) {
+            //TODO
+        }
+
+        @Override
         public void visit(IgnoredField ignoredField) {
         }
 
@@ -483,6 +502,11 @@ public final class ArtifactInfoGatherer implements ModelWidgetVisitor, ModelActi
 
         @Override
         public void visit(ResetField resetField) {
+        }
+        
+        @Override
+        public void visit(ScreenField screenField) {
+            //TODO
         }
 
         @Override

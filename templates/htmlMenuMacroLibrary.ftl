@@ -46,56 +46,56 @@ under the License.
 <img src="${src}"<#if id?has_content> id="${id}"</#if><#if style?has_content> class="${style}"</#if><#if width?has_content> width="${width}"</#if><#if height?has_content> height="${height}"</#if><#if border?has_content> border="${border}"</#if> />
 </#macro>
 
-<#macro renderLink linkUrl parameterList targetWindow target uniqueItemName actionUrl linkType="" id="" style="" name="" height="" width="" text="" imgStr="">
-	<#if "ajax-window" != linkType>
-		<#if linkType?has_content && "hidden-form" == linkType>
-		<form method="post" action="${actionUrl}"<#if targetWindow?has_content> target="${targetWindow}"</#if> onsubmit="javascript:submitFormDisableSubmits(this)" name="${uniqueItemName}"><#rt/>
-	    	<#list parameterList as parameter>
-			<input name="${parameter.name}" value="${parameter.value}" type="hidden"/><#rt/>
-	    	</#list>
-		</form><#rt/>
-	  	</#if>
-		<#if (linkType?has_content && "hidden-form" == linkType) || linkUrl?has_content>
-		<a<#if id?has_content> id="${id}"</#if><#if style?has_content> class="${style}"</#if><#if name?has_content> name="${name}"</#if><#if targetWindow?has_content> target="${targetWindow}"</#if> href="<#if "hidden-form"==linkType>javascript:document.${uniqueItemName}.submit()<#else>${linkUrl}</#if>"><#rt/>
-		</#if>
-		<#if imgStr?has_content>${imgStr}</#if><#if text?has_content>${text}</#if><#rt/>
-		<#if (linkType?has_content && "hidden-form" == linkType) || linkUrl?has_content></a><#rt/></#if>
-	<#else>
-		<div id="${uniqueItemName}"></div>
-        <a href="javascript:void(0);" id="${uniqueItemName}_link" 
-        <#if style?has_content>class="${style}"</#if>>
-        <#if text?has_content>${text}</#if></a>
-        <script type="text/javascript">
-            function getRequestData () {
-                var data =  {
-                    <#list parameterList as parameter>
-                        "${parameter.name}": "${parameter.value}",
+<#macro renderLink linkUrl parameterList targetWindow uniqueItemName actionUrl linkType="" id="" style="" name="" height="" width="" text="" imgStr="">
+  <#if linkType?has_content && "hidden-form" == linkType>
+<form method="post" action="${actionUrl}"<#if targetWindow?has_content> target="${targetWindow}"</#if> onsubmit="javascript:submitFormDisableSubmits(this)" name="${uniqueItemName}"><#rt/>
+    <#list parameterList as parameter>
+<input name="${parameter.name}" value="${parameter.value}" type="hidden"/><#rt/>
+    </#list>
+</form><#rt/>
+  </#if>
+  <#if uniqueItemName?has_content && "layered-modal" == linkType>
+<div id="${uniqueItemName}"></div>
+<a href="javascript:void(0);" id="${uniqueItemName}_link" 
+    <#if style?has_content>class="${style}"</#if>>
+    <#if text?has_content>${text}</#if></a>
+<script type="text/javascript">
+    function ${uniqueItemName}_data() {
+        var data =  {
+                   <#list parameterList as parameter>
+                    "${parameter.name}": "${parameter.value}",
                     </#list>
                     "presentation": "layer"
                 };
-        
                 return data;
             }
-            jQuery("#${uniqueItemName}_link").click( function () {
+            jQuery("#${uniqueItemName}_link").click(function () {
                 jQuery("#${uniqueItemName}").dialog("open");
             });
             jQuery("#${uniqueItemName}").dialog({
                  autoOpen: false,
                  <#if text?has_content>title: "${text}",</#if>
-                 height: "${height}",
-                 width: "${width}",
+                 height: <#if height == "">600<#else>${height}</#if>,
+                 width: <#if width == "">800<#else>${width}</#if>,
                  modal: true,
+                 closeOnEscape: true,
                  open: function() {
                          jQuery.ajax({
-                             url: "${target}",
+                             url: "${linkUrl}",
                              type: "POST",
-                             data: getRequestData(),
+                             data: ${uniqueItemName}_data(),
                              success: function(data) {jQuery("#${uniqueItemName}").html(data);}
                          });
                  }
             });
-        </script>
-	</#if>
+      </script>
+  <#else>
+<#if (linkType?has_content && "hidden-form" == linkType) || linkUrl?has_content>
+<a<#if id?has_content> id="${id}"</#if><#if style?has_content> class="${style}"</#if><#if name?has_content> name="${name}"</#if><#if targetWindow?has_content> target="${targetWindow}"</#if> href="<#if "hidden-form"==linkType>javascript:document.${uniqueItemName}.submit()<#else>${linkUrl}</#if>"><#rt/>
+</#if>
+<#if imgStr?has_content>${imgStr}</#if> <#if text?has_content>${text}</#if><#rt/>
+<#if (linkType?has_content && "hidden-form" == linkType) || linkUrl?has_content></a><#rt/></#if>
+  </#if>
 </#macro>
 
 <#macro renderMenuItemBegin style toolTip linkStr containsNestedMenus>

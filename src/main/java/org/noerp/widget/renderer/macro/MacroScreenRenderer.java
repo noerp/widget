@@ -45,6 +45,7 @@ import org.noerp.base.util.UtilValidate;
 import org.noerp.base.util.template.FreeMarkerWorker;
 import org.noerp.entity.Delegator;
 import org.noerp.entity.GenericValue;
+import org.noerp.entity.util.EntityUtilProperties;
 import org.noerp.service.LocalDispatcher;
 import org.noerp.webapp.control.RequestHandler;
 import org.noerp.webapp.taglib.ContentUrlTag;
@@ -62,7 +63,7 @@ import org.noerp.widget.renderer.FormStringRenderer;
 import org.noerp.widget.renderer.MenuStringRenderer;
 import org.noerp.widget.renderer.Paginator;
 import org.noerp.widget.renderer.ScreenStringRenderer;
-import org.noerp.widget.renderer.html.HtmlScreenRenderer.ScreenletMenuRenderer;
+
 import org.xml.sax.SAXException;
 
 import freemarker.core.Environment;
@@ -232,16 +233,16 @@ public class MacroScreenRenderer implements ScreenStringRenderer {
         String linkType = WidgetWorker.determineAutoLinkType(link.getLinkType(), target, link.getUrlMode(), request);
         String linkUrl = "";
         String actionUrl = "";
-        StringBuilder parameters=new StringBuilder();
+        StringBuilder parameters = new StringBuilder();
         String width = link.getWidth();
         if (UtilValidate.isEmpty(width)) {
-            width = "auto";
+            width = String.valueOf(UtilProperties.getPropertyValue("widget", "widget.link.default.layered-modal.width", "800"));
         }
         String height = link.getHeight();
         if (UtilValidate.isEmpty(height)) {
-            height = "auto";
+            height = String.valueOf(UtilProperties.getPropertyValue("widget", "widget.link.default.layered-modal.height", "600"));
         }
-        if ("hidden-form".equals(linkType) || "ajax-window".equals(linkType)) {
+        if ("hidden-form".equals(linkType) || "layered-modal".equals(linkType)) {
             StringBuilder sb = new StringBuilder();
             WidgetWorker.buildHyperlinkUrl(sb, target, link.getUrlMode(), null, link.getPrefix(context),
                     link.getFullPath(), link.getSecure(), link.getEncode(), request, response, context);
@@ -259,7 +260,6 @@ public class MacroScreenRenderer implements ScreenStringRenderer {
                 parameters.append("'}");
             }
             parameters.append("]");
-
         }
         String id = link.getId(context);
         String style = link.getStyle(context);
@@ -621,10 +621,16 @@ public class MacroScreenRenderer implements ScreenStringRenderer {
             StringWriter sb = new StringWriter();
             if (navMenu != null) {
                 MenuStringRenderer savedRenderer = (MenuStringRenderer) context.get("menuStringRenderer");
-                MenuStringRenderer renderer = new ScreenletMenuRenderer(request, response);
-                context.put("menuStringRenderer", renderer);
-                navMenu.renderWidgetString(sb, context, this);
-                context.put("menuStringRenderer", savedRenderer);
+                MenuStringRenderer renderer;
+                try {
+                    renderer = new MacroMenuRenderer(EntityUtilProperties.getPropertyValue("widget", "screen.menurenderer", (Delegator) request.getAttribute("delegator")),
+                            request, response);
+                    context.put("menuStringRenderer", renderer);
+                    navMenu.renderWidgetString(sb, context, this);
+                    context.put("menuStringRenderer", savedRenderer);
+                } catch (TemplateException e) {
+                    Debug.logError(e, module); 
+                }
             } else if (navForm != null) {
                 renderScreenletPaginateMenu(sb, context, navForm);
             }
@@ -1049,5 +1055,14 @@ public class MacroScreenRenderer implements ScreenStringRenderer {
             executeMacro(writer, "<@renderColumnEnd />");
         }
         executeMacro(writer, "<@renderColumnContainerEnd />");
+    }
+    
+    // This is a util method to get the style from a property file
+    public static String getFoStyle(String styleName) {
+        String value = UtilProperties.getPropertyValue("fo-styles", styleName);
+        if (value.equals(styleName)) {
+            return "";
+        }
+        return value;
     }
 }

@@ -30,7 +30,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.transform.stream.StreamSource;
 
+import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
+import org.apache.fop.apps.FopFactory;
+import org.apache.fop.pdf.PDFEncryptionParams;
+import org.apache.fop.render.pdf.PDFEncryptionOption;
 import org.noerp.base.util.Debug;
 import org.noerp.base.util.UtilCodec;
 import org.noerp.base.util.UtilProperties;
@@ -43,7 +47,7 @@ import org.noerp.webapp.view.ViewHandlerException;
 import org.noerp.widget.renderer.FormStringRenderer;
 import org.noerp.widget.renderer.ScreenRenderer;
 import org.noerp.widget.renderer.ScreenStringRenderer;
-import org.noerp.widget.renderer.html.HtmlScreenRenderer;
+
 import org.noerp.widget.renderer.macro.MacroFormRenderer;
 import org.noerp.widget.renderer.macro.MacroScreenRenderer;
 
@@ -102,11 +106,49 @@ public class ScreenFopViewHandler extends AbstractViewHandler {
         if (UtilValidate.isEmpty(contentType)) {
             contentType = UtilProperties.getPropertyValue("widget", getName() + ".default.contenttype");
         }
+        
+        // get encryption related parameters
+        FOUserAgent foUserAgent = null;
+        String userPassword = request.getParameter("userPassword");
+        String ownerPassword = request.getParameter("ownerPassword");
+        boolean allowPrint = Boolean.parseBoolean(UtilValidate.isEmpty(request.getParameter("allowPrint")) ? ApacheFopWorker.allowPrintDefault : request.getParameter("allowPrint"));
+        boolean allowCopyContent = Boolean.parseBoolean(UtilValidate.isEmpty(request.getParameter("allowCopyContent")) ? ApacheFopWorker.allowCopyContentDefault : request.getParameter("allowCopyContent"));
+        boolean allowEditContent = Boolean.parseBoolean(UtilValidate.isEmpty(request.getParameter("allowEditContent")) ? ApacheFopWorker.allowEditContentDefault : request.getParameter("allowEditContent"));
+        boolean allowEditAnnotations = Boolean.parseBoolean(UtilValidate.isEmpty(request.getParameter("allowEditAnnotations")) ? ApacheFopWorker.allowEditAnnotationsDefault : request.getParameter("allowEditAnnotations"));
+        if (UtilValidate.isNotEmpty(userPassword) || UtilValidate.isNotEmpty(ownerPassword) || !allowPrint || !allowCopyContent || allowEditContent || !allowEditAnnotations) {
+            int encryptionLength = 128;
+            try {
+                encryptionLength = Integer.parseInt(request.getParameter("encryption-length"));
+            } catch (NumberFormatException e) {
+                try {
+                    encryptionLength = Integer.parseInt(ApacheFopWorker.encryptionLengthDefault);
+                } catch (NumberFormatException e1) {
+                    // ignore
+                }
+            }
+            
+            boolean encryptMetadata = Boolean.parseBoolean(UtilValidate.isEmpty(request.getParameter("encrypt-metadata")) ? ApacheFopWorker.encryptMetadataDefault : request.getParameter("encrypt-metadata"));
+            boolean allowFillInForms = Boolean.parseBoolean(UtilValidate.isEmpty(request.getParameter("allowFillInForms")) ? ApacheFopWorker.allowFillInFormsDefault : request.getParameter("allowFillInForms"));
+            boolean allowAccessContent = Boolean.parseBoolean(UtilValidate.isEmpty(request.getParameter("allowAccessContent")) ? ApacheFopWorker.allowAccessContentDefault : request.getParameter("allowAccessContent"));
+            boolean allowAssembleDocument = Boolean.parseBoolean(UtilValidate.isEmpty(request.getParameter("allowAssembleDocument")) ? ApacheFopWorker.allowAssembleDocumentDefault : request.getParameter("allowAssembleDocument"));
+            boolean allowPrintHq = Boolean.parseBoolean(UtilValidate.isEmpty(request.getParameter("allowPrintHq")) ? ApacheFopWorker.allowPrintHqDefault : request.getParameter("allowPrintHq"));
+            
+            FopFactory fopFactory = ApacheFopWorker.getFactoryInstance();
+            foUserAgent = fopFactory.newFOUserAgent();
+            PDFEncryptionParams pdfEncryptionParams = new PDFEncryptionParams(userPassword, ownerPassword, allowPrint, allowCopyContent, allowEditContent, allowEditAnnotations, encryptMetadata);
+            pdfEncryptionParams.setAllowFillInForms(allowFillInForms);
+            pdfEncryptionParams.setAllowAccessContent(allowAccessContent);
+            pdfEncryptionParams.setAllowAssembleDocument(allowAssembleDocument);
+            pdfEncryptionParams.setAllowPrintHq(allowPrintHq);
+            pdfEncryptionParams.setEncryptionLengthInBits(encryptionLength);
+            foUserAgent.getRendererOptions().put(PDFEncryptionOption.ENCRYPTION_PARAMS, pdfEncryptionParams);
+        }
+        
         Reader reader = new StringReader(screenOutString);
         StreamSource src = new StreamSource(reader);
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         try {
-            Fop fop = ApacheFopWorker.createFopInstance(out, contentType);
+            Fop fop = ApacheFopWorker.createFopInstance(out, contentType, foUserAgent);
             ApacheFopWorker.transform(src, null, fop);
         } catch (Exception e) {
             renderError("Unable to transform FO file", e, screenOutString, request, response);
@@ -128,8 +170,12 @@ public class ScreenFopViewHandler extends AbstractViewHandler {
     protected void renderError(String msg, Exception e, String screenOutString, HttpServletRequest request, HttpServletResponse response) throws ViewHandlerException {
         Debug.logError(msg + ": " + e + "; Screen XSL:FO text was:\n" + screenOutString, module);
         try {
+            Delegator delegator = (Delegator) request.getAttribute("delegator");
             Writer writer = new StringWriter();
-            ScreenRenderer screens = new ScreenRenderer(writer, null, new HtmlScreenRenderer());
+            ScreenStringRenderer screenStringRenderer = new MacroScreenRenderer(EntityUtilProperties.getPropertyValue("widget", "screen.name", delegator),
+                    EntityUtilProperties.getPropertyValue("widget", "screen.screenrenderer", delegator));
+
+            ScreenRenderer screens = new ScreenRenderer(writer, null, screenStringRenderer);
             screens.populateContextForRequest(request, response, servletContext);
             screens.getContext().put("errorMessage", msg + ": " + e);
             screens.render(DEFAULT_ERROR_TEMPLATE);

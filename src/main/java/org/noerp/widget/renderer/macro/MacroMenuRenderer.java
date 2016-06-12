@@ -204,26 +204,22 @@ public class MacroMenuRenderer implements MenuStringRenderer {
         parameters.put("style", link.getStyle(context));
         parameters.put("name", link.getName(context));
         parameters.put("text", link.getText(context));
+        parameters.put("height", link.getHeight());
+        parameters.put("width", link.getWidth());
         parameters.put("targetWindow", link.getTargetWindow(context));
-        
-        String uniqueItemName = menuItem.getModelMenu().getName() + "_" + menuItem.getName() + "_LF_" + UtilMisc.<String> addToBigDecimalInMap(context, "menuUniqueItemIndex", BigDecimal.ONE);
-        if(menuItem.getModelMenu().getExtraIndex(context) != null){
-			uniqueItemName += "_" + menuItem.getModelMenu().getExtraIndex(context);
-		}
-        parameters.put("uniqueItemName", uniqueItemName);
-        
-        String width = link.getWidth();
-        if (UtilValidate.isEmpty(width)) {
-            width = "auto";
+        StringBuffer uniqueItemName = new StringBuffer(menuItem.getModelMenu().getName());
+        uniqueItemName.append("_").append(menuItem.getName()).append("_LF_").append(UtilMisc.<String> addToBigDecimalInMap(context, "menuUniqueItemIndex", BigDecimal.ONE));
+        if (menuItem.getModelMenu().getExtraIndex(context) != null) {
+            uniqueItemName.append("_").append(menuItem.getModelMenu().getExtraIndex(context));
         }
-        parameters.put("width", width);
-        
-        String height = link.getHeight();
-        if (UtilValidate.isEmpty(height)) {
-            height = "auto";
+        if (context.containsKey("itemIndex")) {
+            if (context.containsKey("parentItemIndex")) {
+                uniqueItemName.append(context.get("parentItemIndex")).append("_").append(context.get("itemIndex"));
+            } else {
+                uniqueItemName.append("_").append(context.get("itemIndex")); 
+            }
         }
-        parameters.put("height", height);
-        
+        parameters.put("uniqueItemName", uniqueItemName.toString());
         String linkType = "";
         if (UtilValidate.isNotEmpty(target)) {
             linkType = WidgetWorker.determineAutoLinkType(link.getLinkType(), target, link.getUrlMode(), request);
@@ -233,8 +229,7 @@ public class MacroMenuRenderer implements MenuStringRenderer {
         String linkUrl = "";
         String actionUrl = "";
         StringBuilder targetParameters = new StringBuilder();
-        
-        if ("hidden-form".equals(linkType) || "ajax-window".equals(linkType)) {
+        if ("hidden-form".equals(linkType) || "layered-modal".equals(linkType)) {
             StringBuilder sb = new StringBuilder();
             WidgetWorker.buildHyperlinkUrl(sb, target, link.getUrlMode(), null, link.getPrefix(context), link.getFullPath(), link.getSecure(), link.getEncode(), request, response, context);
             actionUrl = sb.toString();
@@ -259,16 +254,13 @@ public class MacroMenuRenderer implements MenuStringRenderer {
         if (UtilValidate.isNotEmpty(target)) {
             if (!"hidden-form".equals(linkType)) {
                 StringBuilder sb = new StringBuilder();
-                WidgetWorker.buildHyperlinkUrl(sb, target, link.getUrlMode(), link.getParameterMap(context), link.getPrefix(context), link.getFullPath(), link.getSecure(), link.getEncode(), request, response, context);
+                WidgetWorker.buildHyperlinkUrl(sb, target, link.getUrlMode(), "layered-modal".equals(linkType)?null:link.getParameterMap(context), link.getPrefix(context), link.getFullPath(), link.getSecure(), link.getEncode(), request, response, context);
                 linkUrl = sb.toString();
             }
         }
-        
-        parameters.put("target", target);
         parameters.put("linkUrl", linkUrl);
         parameters.put("actionUrl", actionUrl);
         parameters.put("parameterList", targetParameters);
-        
         String imgStr = "";
         Image img = link.getImage();
         if (img != null) {
@@ -277,7 +269,6 @@ public class MacroMenuRenderer implements MenuStringRenderer {
             imgStr = sw.toString();
         }
         parameters.put("imgStr", imgStr);
-        
         try {
             executeMacro(writer, "renderLink", parameters);
         } catch (TemplateException e) {
@@ -308,10 +299,14 @@ public class MacroMenuRenderer implements MenuStringRenderer {
         Map<String, Object> parameters = new HashMap<String, Object>();
         String style = menuItem.getWidgetStyle();
         if (menuItem.isSelected(context)) {
-            style = menuItem.getSelectedStyle();
-            if (UtilValidate.isEmpty(style)) {
-                style = "selected";
+            String selectedStyle = menuItem.getSelectedStyle();
+            if (UtilValidate.isEmpty(selectedStyle)) {
+                selectedStyle = "selected";
             }
+            if (UtilValidate.isNotEmpty(style)) {
+                style += " " ;
+            }
+            style += selectedStyle ;
         }
         if (this.isDisableIfEmpty(menuItem, context)) {
             style = menuItem.getDisabledTitleStyle();
