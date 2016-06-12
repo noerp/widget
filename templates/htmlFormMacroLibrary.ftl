@@ -69,8 +69,8 @@ under the License.
     require
   /><#t/>
   <#if ajaxEnabled?has_content && ajaxEnabled>
-    <#assign defaultMinLength = Static["org.ofbiz.entity.util.EntityUtilProperties"].getPropertyValue("widget", "widget.autocompleter.defaultMinLength", delegator)>
-    <#assign defaultDelay = Static["org.ofbiz.entity.util.EntityUtilProperties"].getPropertyValue("widget", "widget.autocompleter.defaultDelay", delegator)>
+    <#assign defaultMinLength = Static["org.noerp.entity.util.EntityUtilProperties"].getPropertyValue("widget", "widget.autocompleter.defaultMinLength", delegator)>
+    <#assign defaultDelay = Static["org.noerp.entity.util.EntityUtilProperties"].getPropertyValue("widget", "widget.autocompleter.defaultDelay", delegator)>
     <script language="JavaScript" type="text/javascript">ajaxAutoCompleter('${ajaxUrl}', false, ${defaultMinLength!2}, ${defaultDelay!300});</script><#lt/>
   </#if>
 </#macro>
@@ -88,9 +88,9 @@ under the License.
     <#if value?has_content>${value}</#if><#t/>
   </textarea><#lt/>
   <#if visualEditorEnable?has_content>
-    <script language="javascript" src="/images/jquery/plugins/elrte-1.3/js/elrte.min.js" type="text/javascript"></script><#rt/>
+    <script language="javascript" src="/assets/jquery/plugins/elrte-1.3/js/elrte.min.js" type="text/javascript"></script><#rt/>
     <#if language?has_content && language != "en">
-      <script language="javascript" src="/images/jquery/plugins/elrte-1.3/js/i18n/elrte.${language!"en"}.js" type="text/javascript"></script><#rt/>
+      <script language="javascript" src="/assets/jquery/plugins/elrte-1.3/js/i18n/elrte.${language!"en"}.js" type="text/javascript"></script><#rt/>
     </#if>
     <link href="/assets/jquery/plugins/elrte-1.3/css/elrte.min.css" rel="stylesheet" type="text/css">
     <script language="javascript" type="text/javascript">
@@ -632,7 +632,7 @@ Parameter: lastViewName, String, optional - If the ajaxEnabled parameter is true
 Parameter: tabindex, String, optional - HTML tabindex number.
 -->
 <#macro renderLookupField name formName fieldFormName className="" alert="false" value="" size="" maxlength="" id="" event="" action="" readonly=false autocomplete="" descriptionFieldName="" targetParameterIter="" imgSrc="" ajaxUrl="" ajaxEnabled=javaScriptEnabled presentation="layer" width="" height="" position="" fadeBackground="true" clearText="" showDescription="" initiallyCollapsed="" lastViewName="main" tabindex="">
-  <#if Static["org.ofbiz.widget.model.ModelWidget"].widgetBoundaryCommentsEnabled(context)>
+  <#if Static["org.noerp.widget.model.ModelWidget"].widgetBoundaryCommentsEnabled(context)>
   <!-- @renderLookupField -->
   </#if>
   <#if (!ajaxUrl?has_content) && ajaxEnabled?has_content && ajaxEnabled>
@@ -640,7 +640,7 @@ Parameter: tabindex, String, optional - HTML tabindex number.
     <#local ajaxUrl = id + "," + ajaxUrl + ",ajaxLookup=Y" />
   </#if>
   <#if (!showDescription?has_content)>
-    <#local showDescriptionProp = Static["org.ofbiz.entity.util.EntityUtilProperties"].getPropertyValue("widget", "widget.lookup.showDescription", "N", delegator)>
+    <#local showDescriptionProp = Static["org.noerp.entity.util.EntityUtilProperties"].getPropertyValue("widget", "widget.lookup.showDescription", "N", delegator)>
     <#if "Y" == showDescriptionProp>
       <#local showDescription = "true" />
     <#else>
@@ -648,13 +648,13 @@ Parameter: tabindex, String, optional - HTML tabindex number.
     </#if>
   </#if>
   <#if (!position?has_content)>
-    <#local position = Static["org.ofbiz.entity.util.EntityUtilProperties"].getPropertyValue("widget", "widget.lookup.position", "topleft", delegator)>
+    <#local position = Static["org.noerp.entity.util.EntityUtilProperties"].getPropertyValue("widget", "widget.lookup.position", "topleft", delegator)>
   </#if>
   <#if (!width?has_content)>
-    <#local width = Static["org.ofbiz.entity.util.EntityUtilProperties"].getPropertyValue("widget", "widget.lookup.width", "620", delegator)>
+    <#local width = Static["org.noerp.entity.util.EntityUtilProperties"].getPropertyValue("widget", "widget.lookup.width", "620", delegator)>
   </#if>
   <#if (!height?has_content)>
-    <#local height = Static["org.ofbiz.entity.util.EntityUtilProperties"].getPropertyValue("widget", "widget.lookup.height", "500", delegator)>
+    <#local height = Static["org.noerp.entity.util.EntityUtilProperties"].getPropertyValue("widget", "widget.lookup.height", "500", delegator)>
   </#if>
   <#if ajaxEnabled?has_content && ajaxEnabled>
     <script type="text/javascript">
