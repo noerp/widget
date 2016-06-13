@@ -129,8 +129,8 @@ under the License.
             jQuery("#${uniqueItemName}").dialog({
                  autoOpen: false,
                  <#if text?has_content>title: "${text}",</#if>
-                 height: ${height},
-                 width: ${width},
+                 height: "${height}",
+                 width: "${width}",
                  modal: true,
                  closeOnEscape: true,
                  open: function() {
@@ -138,7 +138,15 @@ under the License.
                              url: "${target}",
                              type: "POST",
                              data: ${uniqueItemName}_data(),
-                             success: function(data) {jQuery("#${uniqueItemName}").html(data);}
+                             success: function(data) {
+                             	jQuery("#${uniqueItemName}").html(data).dialog({
+							        position: {
+							            my: "center",
+							            at: "center",
+							            of: window
+							        }
+							    });
+                             }
                          });
                  }
             });

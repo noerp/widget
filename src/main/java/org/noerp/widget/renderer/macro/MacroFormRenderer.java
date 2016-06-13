@@ -3076,12 +3076,12 @@ public final class MacroFormRenderer implements FormStringRenderer {
                 String uniqueItemName = "Modal_".concat(UUID.randomUUID().toString().replace("-", "_"));
                 String width = (String) this.request.getAttribute("width");
                 if (UtilValidate.isEmpty(width)) {
-                    width = String.valueOf(UtilProperties.getPropertyValue("widget", "widget.link.default.layered-modal.width", "800"));
+                    width = String.valueOf(UtilProperties.getPropertyValue("widget", "widget.link.default.layered-modal.width", "auto"));
                     this.request.setAttribute("width", width);
                 }
                 String height = (String) this.request.getAttribute("height");
                 if (UtilValidate.isEmpty(height)) {
-                    height = String.valueOf(UtilProperties.getPropertyValue("widget", "widget.link.default.layered-modal.height", "600"));
+                    height = String.valueOf(UtilProperties.getPropertyValue("widget", "widget.link.default.layered-modal.height", "auto"));
                     this.request.setAttribute("height", height);
                 }
                 this.request.setAttribute("uniqueItemName", uniqueItemName);
