@@ -74,7 +74,7 @@ under the License.
             });
             jQuery("#${uniqueItemName}").dialog({
                  autoOpen: false,
-                 <#if text?has_content>title: "${text}",</#if>
+                 <#if text?has_content>title: $('<div/>').html("${text}").text(),</#if>
                  height: <#if height == "">"auto"<#else>"${height}"</#if>,
                  width: <#if width == "">"auto"<#else>"${width}"</#if>,
                  modal: true,

@@ -893,7 +893,7 @@ Parameter: tabindex, String, optional - HTML tabindex number.
             });
             jQuery("#${uniqueItemName}").dialog({
                  autoOpen: false,
-                 <#if text?has_content>title: "${text}",</#if>
+                 <#if text?has_content>title: $('<div/>').html("${text}").text(),</#if>
                  height: "${height}",
                  width: "${width}",
                  modal: true,
