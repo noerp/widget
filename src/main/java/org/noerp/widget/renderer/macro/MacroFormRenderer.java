@@ -95,6 +95,7 @@ import com.ibm.icu.util.Calendar;
 import freemarker.core.Environment;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
+import javolution.util.FastList;
 
 /**
  * Widget Library - Form Renderer implementation based on Freemarker macros
@@ -998,13 +999,34 @@ public final class MacroFormRenderer implements FormStringRenderer {
         String event = modelFormField.getEvent();
         String action = modelFormField.getAction(context);
         StringBuilder items = new StringBuilder();
+        
         if (UtilValidate.isNotEmpty(modelFormField.getWidgetStyle())) {
             className = modelFormField.getWidgetStyle();
             if (modelFormField.shouldBeRed(context)) {
                 alert = "true";
             }
         }
+        
+        //multi checked
+        StringBuilder values = new StringBuilder(); 
+        List<String> currentValueList = FastList.newInstance();
+        
+        if(UtilValidate.isNotEmpty(currentValue)){
+	        try{
+	        	currentValueList = StringUtil.toList(currentValue);
+	        } catch(IllegalArgumentException e){
+	        	currentValueList = UtilMisc.toList(currentValue);
+	        }
+        }
+        
+        values.append("[");
+        for(String value : currentValueList){
+        	values.append("'" + value + "'");
+        }
+        values.append("]");
+        
         String tabindex = modelFormField.getTabindex();
+        
         List<ModelFormField.OptionValue> allOptionValues = checkField.getAllOptionValues(context, WidgetWorker.getDelegator(context));
         items.append("[");
         for (ModelFormField.OptionValue optionValue : allOptionValues) {
@@ -1016,6 +1038,7 @@ public final class MacroFormRenderer implements FormStringRenderer {
             items.append("', 'description':'" + encode(optionValue.getDescription(), modelFormField, context));
             items.append("'}");
         }
+        
         items.append("]");
         StringWriter sr = new StringWriter();
         sr.append("<@renderCheckField ");
@@ -1029,9 +1052,9 @@ public final class MacroFormRenderer implements FormStringRenderer {
         sr.append(id);
         sr.append("\" allChecked=");
         sr.append((allChecked != null ? Boolean.toString(allChecked) : "\"\""));
-        sr.append(" currentValue=\"");
-        sr.append(currentValue);
-        sr.append("\" name=\"");
+        sr.append(" currentValue=");
+        sr.append(values);
+        sr.append(" name=\"");
         sr.append(name);
         sr.append("\" event=\"");
         if (event != null) {

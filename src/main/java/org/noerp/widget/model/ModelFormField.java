@@ -267,12 +267,15 @@ public class ModelFormField {
         Boolean useRequestParameters = (Boolean) context.get("useRequestParameters");
 
         Locale locale = (Locale) context.get("locale");
-        if (locale == null)
+        if (locale == null){
             locale = Locale.getDefault();
+        }
+        
         TimeZone timeZone = (TimeZone) context.get("timeZone");
-        if (timeZone == null)
+        if (timeZone == null){
             timeZone = TimeZone.getDefault();
-
+        }
+        
         UtilCodec.SimpleEncoder simpleEncoder = (UtilCodec.SimpleEncoder) context.get("simpleEncoder");
 
         String returnValue;
