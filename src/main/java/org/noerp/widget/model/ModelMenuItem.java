@@ -27,6 +27,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.noerp.base.util.Debug;
+import org.noerp.base.util.UtilProperties;
 import org.noerp.base.util.UtilValidate;
 import org.noerp.base.util.UtilXml;
 import org.noerp.base.util.string.FlexibleStringExpander;
@@ -648,6 +649,26 @@ public class ModelMenuItem extends ModelWidget {
 
         public String getWidth() {
             return link.getWidth();
+        }
+        
+        public String getConfirmation(Map<String, Object> context) {
+            String message = getConfirmationMsg(context);
+            if (UtilValidate.isNotEmpty(message))
+                return message;
+            if (getRequestConfirmation()) {
+                String defaultMessage = UtilProperties.getPropertyValue("general", "default.confirmation.message",
+                        "${uiLabelMap.CommonConfirm}");
+                return FlexibleStringExpander.expandString(defaultMessage, context);
+            }
+            return "";
+        }
+        
+        public String getConfirmationMsg(Map<String, Object> context) {
+            return link.getConfirmationMsg(context);
+        }
+        
+        public boolean getRequestConfirmation() {
+            return link.getRequestConfirmation();
         }
 
         public ModelMenuItem getLinkMenuItem() {

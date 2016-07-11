@@ -46,11 +46,11 @@ under the License.
 <img src="${src}"<#if id?has_content> id="${id}"</#if><#if style?has_content> class="${style}"</#if><#if width?has_content> width="${width}"</#if><#if height?has_content> height="${height}"</#if><#if border?has_content> border="${border}"</#if> />
 </#macro>
 
-<#macro renderLink linkUrl parameterList targetWindow uniqueItemName actionUrl linkType="" id="" style="" name="" height="" width="" text="" imgStr="">
+<#macro renderLink linkUrl parameterList targetWindow confirmation uniqueItemName actionUrl linkType="" id="" style="" name="" height="" width="" text="" imgStr="">
   <#if linkType?has_content && "hidden-form" == linkType>
 <form method="post" action="${actionUrl}"<#if targetWindow?has_content> target="${targetWindow}"</#if> onsubmit="javascript:submitFormDisableSubmits(this)" name="${uniqueItemName}"><#rt/>
     <#list parameterList as parameter>
-<input name="${parameter.name}" value="${parameter.value}" type="hidden"/><#rt/>
+	<input name="${parameter.name}" value="${parameter.value}" type="hidden"/><#rt/>
     </#list>
 </form><#rt/>
   </#if>
@@ -96,20 +96,24 @@ under the License.
                          });
                  }
             });
-      </script>
+</script>
   <#else>
-<#if (linkType?has_content && "hidden-form" == linkType) || linkUrl?has_content>
-<a<#if id?has_content> id="${id}"</#if><#if style?has_content> class="${style}"</#if><#if name?has_content> name="${name}"</#if><#if targetWindow?has_content> target="${targetWindow}"</#if> href="<#if "hidden-form"==linkType>javascript:document.${uniqueItemName}.submit()<#else>${linkUrl}</#if>"><#rt/>
-</#if>
-<#if imgStr?has_content>${imgStr}</#if> <#if text?has_content>${text}</#if><#rt/>
-<#if (linkType?has_content && "hidden-form" == linkType) || linkUrl?has_content></a><#rt/></#if>
+	<#if (linkType?has_content && "hidden-form" == linkType) || linkUrl?has_content>
+	<a<#if id?has_content> id="${id}"</#if>
+	<#if style?has_content> class="${style}"</#if>
+	<#if name?has_content> name="${name}"</#if>
+	<#if confirmation?has_content> onclick="return confirm('${confirmation?js_string}')"</#if>
+	<#if targetWindow?has_content> target="${targetWindow}"</#if> href="<#if "hidden-form"==linkType>javascript:document.${uniqueItemName}.submit()<#else>${linkUrl}</#if>"><#rt/>
+	</#if>
+	<#if imgStr?has_content>${imgStr}</#if> <#if text?has_content>${text}</#if><#rt/>
+	<#if (linkType?has_content && "hidden-form" == linkType) || linkUrl?has_content></a><#rt/></#if>
   </#if>
 </#macro>
 
 <#macro renderMenuItemBegin style toolTip linkStr containsNestedMenus>
-        <li<#if style?has_content> class="${style}"</#if><#if toolTip?has_content> title="${toolTip}"</#if>><#if linkStr?has_content>${linkStr}</#if><#if containsNestedMenus><ul></#if><#rt/>
+	<li<#if style?has_content> class="${style}"</#if><#if toolTip?has_content> title="${toolTip}"</#if>><#if linkStr?has_content>${linkStr}</#if><#if containsNestedMenus><ul></#if><#rt/>
 </#macro>
 
 <#macro renderMenuItemEnd containsNestedMenus>
-<#if containsNestedMenus></ul></#if></li>
+	<#if containsNestedMenus></ul></#if></li>
 </#macro>
