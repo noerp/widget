@@ -811,6 +811,7 @@ Parameter: tabindex, String, optional - HTML tabindex number.
 
 <#macro renderFieldGroupOpen style id title collapsed collapsibleAreaId collapsible expandToolTip collapseToolTip>
   <#if style?has_content || id?has_content || title?has_content><div class="fieldgroup<#if style?has_content> ${style}</#if>"<#if id?has_content> id="${id}"</#if>>
+  	<#if collapsible || title?has_content>
     <div class="fieldgroup-title-bar">
       <#if collapsible>
         <ul>
@@ -826,6 +827,7 @@ Parameter: tabindex, String, optional - HTML tabindex number.
         <#if title?has_content>${title}</#if>
       </#if><#rt/>
     </div>
+    </#if>
     <div id="${collapsibleAreaId}" class="fieldgroup-body" <#if collapsed && collapsible> style="display: none;"</#if>>
   </#if>
 </#macro>
