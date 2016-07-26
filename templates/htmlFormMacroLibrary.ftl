@@ -901,6 +901,7 @@ Parameter: tabindex, String, optional - HTML tabindex number.
                  modal: true,
                  closeOnEscape: true,
                  open: function() {
+                 		 waitSpinnerShow();
                          jQuery.ajax({
                              url: "${linkUrl}",
                              type: "POST",
@@ -913,9 +914,13 @@ Parameter: tabindex, String, optional - HTML tabindex number.
 							            of: window
 							        }
 							    });
+							    waitSpinnerHide();
                              }
                          });
-                 }
+                 },
+                 close : function() {
+					$("#${uniqueItemName}").empty();
+				 }
             });
         </script>
     <#else>

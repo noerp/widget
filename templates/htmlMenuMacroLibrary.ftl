@@ -80,6 +80,7 @@ under the License.
                  modal: true,
                  closeOnEscape: true,
                  open: function() {
+                 		 waitSpinnerShow();
                          jQuery.ajax({
                              url: "${linkUrl}",
                              type: "POST",
@@ -92,9 +93,13 @@ under the License.
 							            of: window
 							        }
 							    });
+							    waitSpinnerHide();
                              }
                          });
-                 }
+                 },
+                 close : function() {
+					$("#${uniqueItemName}").empty();
+				 }
             });
 </script>
   <#else>
