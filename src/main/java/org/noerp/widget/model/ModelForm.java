@@ -386,26 +386,33 @@ public abstract class ModelForm extends ModelWidget {
         }
         altTargets.trimToSize();
         this.altTargets = Collections.unmodifiableList(altTargets);
+        
+        //actions
         ArrayList<ModelAction> actions = new ArrayList<ModelAction>();
         if (parentModel != null) {
             actions.addAll(parentModel.actions);
         }
         Element actionsElement = UtilXml.firstChildElement(formElement, "actions");
         if (actionsElement != null) {
+        	actions.clear();
             actions.addAll(ModelFormAction.readSubActions(this, actionsElement));
         }
         actions.trimToSize();
         this.actions = Collections.unmodifiableList(actions);
+        
+        //row actions
         ArrayList<ModelAction> rowActions = new ArrayList<ModelAction>();
         if (parentModel != null) {
             rowActions.addAll(parentModel.rowActions);
         }
         Element rowActionsElement = UtilXml.firstChildElement(formElement, "row-actions");
         if (rowActionsElement != null) {
+        	rowActions.clear();
             rowActions.addAll(ModelFormAction.readSubActions(this, rowActionsElement));
         }
         rowActions.trimToSize();
         this.rowActions = Collections.unmodifiableList(rowActions);
+        
         ArrayList<UpdateArea> onPaginateUpdateAreas = new ArrayList<UpdateArea>();
         ArrayList<UpdateArea> onSubmitUpdateAreas = new ArrayList<UpdateArea>();
         ArrayList<UpdateArea> onSortColumnUpdateAreas = new ArrayList<UpdateArea>();
