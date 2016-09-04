@@ -75,6 +75,7 @@ import org.noerp.widget.model.ModelFormField.SubmitField;
 import org.noerp.widget.model.ModelFormField.TextField;
 import org.noerp.widget.model.ModelFormField.TextFindField;
 import org.noerp.widget.model.ModelFormField.TextareaField;
+import org.noerp.widget.model.ModelFormField.UploadField;
 import org.noerp.widget.model.ModelGrid;
 import org.noerp.widget.model.ModelMenu;
 import org.noerp.widget.model.ModelMenuAction;
@@ -524,6 +525,11 @@ public final class ArtifactInfoGatherer implements ModelWidgetVisitor, ModelActi
         @Override
         public void visit(TextFindField textField) {
         }
+
+		@Override
+		public void visit(UploadField uploadField) throws Exception {
+			// TODO Auto-generated method stub
+		}
     }
 
     public void visitModelForm(ModelForm modelForm) throws Exception {

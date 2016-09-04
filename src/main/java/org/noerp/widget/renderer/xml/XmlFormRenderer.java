@@ -51,6 +51,7 @@ import org.noerp.widget.model.ModelFormField.SubmitField;
 import org.noerp.widget.model.ModelFormField.TextField;
 import org.noerp.widget.model.ModelFormField.TextFindField;
 import org.noerp.widget.model.ModelFormField.TextareaField;
+import org.noerp.widget.model.ModelFormField.UploadField;
 import org.noerp.widget.renderer.FormStringRenderer;
 
 
@@ -347,4 +348,11 @@ public class XmlFormRenderer implements FormStringRenderer {
 
     public void renderContainerFindField(Appendable writer, Map<String, Object> context, ContainerField containerField) throws IOException {
     }
+
+	@Override
+	public void renderUploadField(Appendable writer, Map<String, Object> context, UploadField uploadField)
+			throws IOException {
+		// TODO Auto-generated method stub
+		
+	}
 }

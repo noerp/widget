@@ -69,6 +69,7 @@ import org.noerp.widget.model.ModelFormField.SubmitField;
 import org.noerp.widget.model.ModelFormField.TextField;
 import org.noerp.widget.model.ModelFormField.TextFindField;
 import org.noerp.widget.model.ModelFormField.TextareaField;
+import org.noerp.widget.model.ModelFormField.UploadField;
 import org.noerp.widget.model.ModelWidget;
 import org.noerp.widget.renderer.FormRenderer;
 import org.noerp.widget.renderer.FormStringRenderer;
@@ -2792,6 +2793,10 @@ public class HtmlFormRenderer extends HtmlWidgetRenderer implements FormStringRe
             writer.append("\" ");
         }
         writer.append("/>");
+    }
+    
+    public void renderUploadField(Appendable writer, Map<String, Object> context, UploadField uploadField) throws IOException {
+    	
     }
 
     /** Create an ajaxXxxx JavaScript CSV string from a list of UpdateArea objects. See

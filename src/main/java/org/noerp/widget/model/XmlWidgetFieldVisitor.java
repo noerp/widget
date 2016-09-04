@@ -50,6 +50,7 @@ import org.noerp.widget.model.ModelFormField.SubmitField;
 import org.noerp.widget.model.ModelFormField.TextField;
 import org.noerp.widget.model.ModelFormField.TextFindField;
 import org.noerp.widget.model.ModelFormField.TextareaField;
+import org.noerp.widget.model.ModelFormField.UploadField;
 
 /**
  * An object that generates XML from widget models.
@@ -499,4 +500,10 @@ public class XmlWidgetFieldVisitor extends XmlAbstractWidgetVisitor implements M
             writer.append("</on-field-event-update-area>");
         }
     }
+
+	@Override
+	public void visit(UploadField uploadField) throws Exception {
+		// TODO Auto-generated method stub
+		
+	}
 }

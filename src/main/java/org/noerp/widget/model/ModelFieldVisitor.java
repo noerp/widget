@@ -43,6 +43,7 @@ import org.noerp.widget.model.ModelFormField.SubmitField;
 import org.noerp.widget.model.ModelFormField.TextField;
 import org.noerp.widget.model.ModelFormField.TextFindField;
 import org.noerp.widget.model.ModelFormField.TextareaField;
+import org.noerp.widget.model.ModelFormField.UploadField;
 
 /**
  *  A <code>ModelFormField</code> visitor.
@@ -98,4 +99,6 @@ public interface ModelFieldVisitor {
     void visit(TextField textField) throws Exception ;
 
     void visit(TextFindField textFindField) throws Exception ;
+    
+    void visit(UploadField uploadField) throws Exception ;
 }

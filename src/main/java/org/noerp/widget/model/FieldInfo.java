@@ -61,6 +61,7 @@ public abstract class FieldInfo {
     public static final int FORM = 23;
     public static final int GRID = 24;
     public static final int SCREEN = 25;
+    public static final int UPLOAD = 26;
     // the numbering here represents the priority of the source;
     //when setting a new fieldInfo on a modelFormField it will only set
     //the new one if the fieldSource is less than or equal to the existing
@@ -98,6 +99,7 @@ public abstract class FieldInfo {
         fieldTypeByName.put("include-form", Integer.valueOf(23));
         fieldTypeByName.put("include-grid", Integer.valueOf(24));
         fieldTypeByName.put("include-screen", Integer.valueOf(25));
+        fieldTypeByName.put("upload", Integer.valueOf(26));
         return Collections.unmodifiableMap(fieldTypeByName);
     }
 

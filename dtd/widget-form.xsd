@@ -1713,6 +1713,33 @@ under the License.
             </xs:attribute>
         </xs:complexType>
     </xs:element>
+    <xs:element name="upload" substitutionGroup="AllFields">
+        <xs:complexType>
+            <xs:attribute type="xs:string" name="default-value" />
+            <xs:attribute name="multi" default="false">
+                <xs:annotation>
+                    <xs:documentation>Makes this upload field multi (multi files upload allowed)</xs:documentation>
+                </xs:annotation>
+                <xs:simpleType>
+                    <xs:restriction base="xs:token">
+                        <xs:enumeration value="true" />
+                        <xs:enumeration value="false" />
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:attribute>
+            <xs:attribute name="read-only" default="false">
+                <xs:annotation>
+                    <xs:documentation>Makes this upload field read-only (no edits allowed)</xs:documentation>
+                </xs:annotation>
+                <xs:simpleType>
+                    <xs:restriction base="xs:token">
+                        <xs:enumeration value="true" />
+                        <xs:enumeration value="false" />
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:attribute>
+        </xs:complexType>
+    </xs:element>
 
     <!-- ================== Field Events ==================== -->
     <xs:element name="on-field-event-update-area">

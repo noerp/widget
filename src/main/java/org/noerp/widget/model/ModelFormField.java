@@ -4280,4 +4280,62 @@ public class ModelFormField {
             formStringRenderer.renderTextFindField(writer, context, this);
         }
     }
+    
+
+    /**
+     * Models the &lt;upload&gt; element.
+     * 
+     * @see <code>widget-form.xsd</code>
+     */
+    public static class UploadField extends FieldInfo {
+        private final boolean readonly;
+        private final boolean multi;
+        private final FlexibleStringExpander defaultValue;
+
+        public UploadField(Element element, ModelFormField modelFormField) {
+            super(element, modelFormField);
+            this.readonly = "true".equals(element.getAttribute("read-only"));
+            this.multi = "true".equals(element.getAttribute("multi"));
+            this.defaultValue = FlexibleStringExpander.getInstance(element.getAttribute("default-value"));
+        }
+        
+        protected UploadField(UploadField original, ModelFormField modelFormField) {
+            super(original.getFieldSource(), original.getFieldType(), modelFormField);
+            this.readonly = original.readonly;
+            this.multi = original.multi;
+            this.defaultValue = original.defaultValue;
+        }
+
+        @Override
+        public void accept(ModelFieldVisitor visitor) throws Exception {
+            visitor.visit(this);
+        }
+
+		@Override
+		public FieldInfo copy(ModelFormField modelFormField) {
+			return new UploadField(this, modelFormField);
+		}
+		
+		public String getDefaultValue(Map<String, Object> context) {
+            if (this.defaultValue != null) {
+                return this.defaultValue.expandString(context);
+            } else {
+                return "";
+            }
+        }
+
+        public boolean getReadonly() {
+            return this.readonly;
+        }
+        
+        public boolean getMulti() {
+            return this.multi;
+        }
+
+        @Override
+        public void renderFieldString(Appendable writer, Map<String, Object> context, FormStringRenderer formStringRenderer)
+                throws IOException {
+            formStringRenderer.renderUploadField(writer, context, this);
+        }
+    }
 }

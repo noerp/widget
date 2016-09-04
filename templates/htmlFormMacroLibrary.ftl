@@ -933,3 +933,19 @@ Parameter: tabindex, String, optional - HTML tabindex number.
       <#if imgSrc?has_content><img src="${imgSrc}" alt="${alternate}" title="${title}"/></#if>${description}</a>
     </#if>
 </#macro>
+
+<#macro renderUploadField name id className value multi readOnly addLabel>
+	<div id="${id}_uploadContainer" class="${className}">
+		<div id="${id}_uploadedFilesContainer"></div>
+		<input type="hidden" name="${name?default("")?html}" id="${id}" value="${value}"></input>
+		<#if !readOnly>
+			<a href="javascript:void(0);" id="${id}_uploadButton" class="upload-button">${addLabel}</a>
+		</#if>
+	</div>
+	<script type="text/javascript">
+		$('#${id}').uploadField({
+			readOnly    : ${readOnly?string},
+	        multi       : ${multi?string}
+		});
+	</script>
+</#macro> 

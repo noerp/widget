@@ -81,6 +81,7 @@ import org.noerp.widget.model.ModelFormField.SubmitField;
 import org.noerp.widget.model.ModelFormField.TextField;
 import org.noerp.widget.model.ModelFormField.TextFindField;
 import org.noerp.widget.model.ModelFormField.TextareaField;
+import org.noerp.widget.model.ModelFormField.UploadField;
 import org.noerp.widget.model.ModelFormFieldBuilder;
 import org.noerp.widget.model.ModelScreenWidget;
 import org.noerp.widget.model.ModelSingleForm;
@@ -3297,4 +3298,43 @@ public final class MacroFormRenderer implements FormStringRenderer {
         sr.append("\" />");
         executeMacro(writer, sr.toString());
     }
+
+	@Override
+	public void renderUploadField(Appendable writer, Map<String, Object> context, UploadField uploadField)
+			throws IOException {
+		ModelFormField modelFormField = uploadField.getModelFormField();
+		Map<String, String> uiLabelMap = UtilGenerics.checkMap(context.get("uiLabelMap"));
+		
+		String addFileLabel = "";
+		if (uiLabelMap != null) {
+			addFileLabel = uiLabelMap.get("CommonAdd");
+        }
+		
+		String id = modelFormField.getCurrentContainerId(context);
+		String name = modelFormField.getParameterName(context);
+		String className = UtilFormatOut.checkNull(modelFormField.getWidgetStyle());
+        Boolean readOnly = uploadField.getReadonly();
+        Boolean multi = uploadField.getMulti();
+        
+        String value = modelFormField.getEntry(context, uploadField.getDefaultValue(context));
+        
+        StringWriter sr = new StringWriter();
+        sr.append("<@renderUploadField ");
+        sr.append("name=\"");
+        sr.append(name);
+        sr.append("\" id=\"");
+        sr.append(id);
+        sr.append("\" className=\"");
+        sr.append(className);
+        sr.append("\" value=\"");
+        sr.append(value);
+        sr.append("\" multi=");
+        sr.append(Boolean.toString(multi));
+        sr.append(" readOnly=");
+        sr.append(Boolean.toString(readOnly));
+        sr.append(" addLabel=\"");
+        sr.append(addFileLabel);
+        sr.append("\" />");
+        executeMacro(writer, sr.toString());
+	}
 }

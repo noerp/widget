@@ -62,6 +62,7 @@ import org.noerp.widget.model.ModelFormField.SubmitField;
 import org.noerp.widget.model.ModelFormField.TextField;
 import org.noerp.widget.model.ModelFormField.TextFindField;
 import org.noerp.widget.model.ModelFormField.TextareaField;
+import org.noerp.widget.model.ModelFormField.UploadField;
 import org.w3c.dom.Element;
 
 /**
@@ -232,6 +233,8 @@ public class ModelFormFieldBuilder {
             this.fieldInfo = new ImageField(childElement, null);
         else if ("container".equals(this.fieldType))
             this.fieldInfo = new ContainerField(childElement, null);
+        else if ("upload".equals(this.fieldType))
+            this.fieldInfo = new UploadField(childElement, null);
         else
             throw new IllegalArgumentException("The field sub-element with name " + this.fieldType + " is not supported");
     }
