@@ -3316,6 +3316,7 @@ public final class MacroFormRenderer implements FormStringRenderer {
         Boolean readOnly = uploadField.getReadonly();
         Boolean multi = uploadField.getMulti();
         
+        String fileExtentions = uploadField.getFileExtentions(context);
         String value = modelFormField.getEntry(context, uploadField.getDefaultValue(context));
         
         StringWriter sr = new StringWriter();
@@ -3334,6 +3335,8 @@ public final class MacroFormRenderer implements FormStringRenderer {
         sr.append(Boolean.toString(readOnly));
         sr.append(" addLabel=\"");
         sr.append(addFileLabel);
+        sr.append("\" fileExtentions=\"");
+        sr.append(fileExtentions);
         sr.append("\" />");
         executeMacro(writer, sr.toString());
 	}

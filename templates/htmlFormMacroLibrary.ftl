@@ -934,7 +934,7 @@ Parameter: tabindex, String, optional - HTML tabindex number.
     </#if>
 </#macro>
 
-<#macro renderUploadField name id className value multi readOnly addLabel>
+<#macro renderUploadField name id className value multi readOnly addLabel fileExtentions>
 	<div id="${id}_uploadContainer" class="${className}">
 		<div id="${id}_uploadedFilesContainer"></div>
 		<input type="hidden" name="${name?default("")?html}" id="${id}" value="${value}"></input>
@@ -944,8 +944,9 @@ Parameter: tabindex, String, optional - HTML tabindex number.
 	</div>
 	<script type="text/javascript">
 		$('#${id}').uploadField({
-			readOnly    : ${readOnly?string},
-	        multi       : ${multi?string}
+			readOnly      : ${readOnly?string},
+	        multi         : ${multi?string},
+	        fileExtentions: '${fileExtentions}'
 		});
 	</script>
 </#macro> 

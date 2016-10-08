@@ -4290,12 +4290,14 @@ public class ModelFormField {
     public static class UploadField extends FieldInfo {
         private final boolean readonly;
         private final boolean multi;
+        private final FlexibleStringExpander fileExtentions;
         private final FlexibleStringExpander defaultValue;
 
         public UploadField(Element element, ModelFormField modelFormField) {
             super(element, modelFormField);
             this.readonly = "true".equals(element.getAttribute("read-only"));
             this.multi = "true".equals(element.getAttribute("multi"));
+            this.fileExtentions = FlexibleStringExpander.getInstance(element.getAttribute("file-extentions"));
             this.defaultValue = FlexibleStringExpander.getInstance(element.getAttribute("default-value"));
         }
         
@@ -4303,6 +4305,7 @@ public class ModelFormField {
             super(original.getFieldSource(), original.getFieldType(), modelFormField);
             this.readonly = original.readonly;
             this.multi = original.multi;
+            this.fileExtentions = original.fileExtentions;
             this.defaultValue = original.defaultValue;
         }
 
@@ -4319,6 +4322,14 @@ public class ModelFormField {
 		public String getDefaultValue(Map<String, Object> context) {
             if (this.defaultValue != null) {
                 return this.defaultValue.expandString(context);
+            } else {
+                return "";
+            }
+        }
+		
+		public String getFileExtentions(Map<String, Object> context) {
+            if (this.fileExtentions != null) {
+                return this.fileExtentions.expandString(context);
             } else {
                 return "";
             }

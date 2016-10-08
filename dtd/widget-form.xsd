@@ -1738,6 +1738,7 @@ under the License.
                     </xs:restriction>
                 </xs:simpleType>
             </xs:attribute>
+            <xs:attribute type="xs:string" name="file-extensions" />
         </xs:complexType>
     </xs:element>
 
